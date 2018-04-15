@@ -103,6 +103,7 @@
     <Build Include="dbo\Stored Procedures\CustOrdersOrders.sql" />
     <Build Include="dbo\Stored Procedures\CustOrderHist.sql" />
     <Build Include="dbo\Stored Procedures\SalesByCategory.sql" />
+    <Build Include="dbo\Stored Procedures\usp_GetCategoriesAndProducts.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DbProject.publish.xml" />

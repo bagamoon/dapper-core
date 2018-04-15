@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,7 @@ namespace DapperTesting.Models
 {
     public class Product
     {
+        [Key]
         public int ProductID { get; set; }
 
         public string ProductName { get; set; }
