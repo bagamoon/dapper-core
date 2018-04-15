@@ -12,7 +12,7 @@ using DapperTesting.Models;
 using DapperTesting.ViewModels;
 
 namespace DapperTesting.Tests
-{
+{    
     [TestClass]
     public class QueryTest
     {
@@ -30,7 +30,8 @@ namespace DapperTesting.Tests
             }
         }
 
-        [TestMethod]
+        
+        [TestMethod()]
         public void Query_Without_Conditions_Should_Return_All_Results()
         {
             using (var conn = ConnectionFactory.GetConnection())
@@ -43,11 +44,11 @@ namespace DapperTesting.Tests
 
             using (var conn = ConnectionFactory.GetConnection())
             {
-                var result = conn.Query<Customer>(sql);
+                var result = conn.Query<Customer>(sql).ToList();
 
                 result.Count().Should().Be(2);
-                result.First().CustomerID.Should().BeEquivalentTo("Brett");
-                result.Last().CustomerID.Should().BeEquivalentTo("Kenny");
+                result[0].CustomerID.Should().BeEquivalentTo("Brett");
+                result[1].CustomerID.Should().BeEquivalentTo("Kenny");
             }
         }
 
@@ -180,11 +181,12 @@ namespace DapperTesting.Tests
                                         return vm;
                                     },
                                 splitOn: "ProductId")
-                                .Distinct();
+                                .Distinct()
+                                .ToList();
 
                 result.Count().Should().Be(2);
-                result.First().Products.Count().Should().Be(2);
-                result.Last().Products.Count().Should().Be(1);
+                result[0].Products.Count().Should().Be(2);
+                result[1].Products.Count().Should().Be(1);
             }
         }
 
