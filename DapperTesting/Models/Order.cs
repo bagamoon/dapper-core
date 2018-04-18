@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +7,9 @@ namespace DapperTesting.Models
 {
     public class Order
     {
+        [Key]
         public int OrderID { get; set; }
-
+        
         public string CustomerID { get; set; }
 
         public int? EmployeeID { get; set; }

@@ -21,9 +21,11 @@ namespace DapperTesting.Tests
         {
             using (var conn = ConnectionFactory.GetConnection())
             {
-                var deleteSql = @"delete from customers
+                var deleteSql = @"delete from orders
+                                  delete from customers
                                   delete from products
                                   delete from categories
+                                  DBCC CHECKIDENT ('orders', RESEED, 0)
                                   DBCC CHECKIDENT ('products', RESEED, 0)
                                   DBCC CHECKIDENT ('categories', RESEED, 0)";
                 conn.Execute(deleteSql);
