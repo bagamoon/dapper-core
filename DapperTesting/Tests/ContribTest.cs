@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 
 namespace DapperTesting.Tests
-{    
+{
     [TestClass]
     public class ContribTest
     {
@@ -19,10 +19,11 @@ namespace DapperTesting.Tests
         {
             using (var conn = ConnectionFactory.GetConnection())
             {
-                var deleteSql = @"delete from orders
+                var deleteSql = @"delete from [Order Details]
+                                  delete from orders
                                   delete from customers
                                   delete from products
-                                  delete from categories
+                                  delete from categories                                  
                                   DBCC CHECKIDENT ('orders', RESEED, 0)
                                   DBCC CHECKIDENT ('products', RESEED, 0)
                                   DBCC CHECKIDENT ('categories', RESEED, 0)";
@@ -34,11 +35,11 @@ namespace DapperTesting.Tests
         public void GetAll_Should_Return_All_Results()
         {
             using (var conn = ConnectionFactory.GetConnection())
-            {                
+            {
                 conn.Insert(new Customer { CustomerID = "Brett", CompanyName = "Brett Yu" });
                 conn.Insert(new Customer { CustomerID = "Kenny", CompanyName = "Kenny G" });
             }
-            
+
             using (var conn = ConnectionFactory.GetConnection())
             {
                 var result = conn.GetAll<Customer>().ToList();
@@ -73,12 +74,12 @@ namespace DapperTesting.Tests
                 var result = conn.Get<Customer>("Brett");
 
                 result.Fax.Should().BeEquivalentTo("123");
-                result.CompanyName.Should().BeEquivalentTo("Little Gray");                
+                result.CompanyName.Should().BeEquivalentTo("Little Gray");
             }
         }
 
         [TestMethod]
-        public void Insert_Should_Insert_Successfully_And_Return_New_Id()
+        public void Insert_With_Identity_Key_Should_Be_Inserted_Successfully_And_Return_New_Id()
         {
             using (var conn = ConnectionFactory.GetConnection())
             {
@@ -89,6 +90,34 @@ namespace DapperTesting.Tests
                 var result = conn.GetAll<Order>().ToList();
                 result.Count().Should().Be(1);
                 result[0].CustomerID = "Brett";
+            }
+        }
+
+        [TestMethod]
+        public void Insert_With_Composite_Key_Should_Be_Inserted_Successfully()
+        {
+            int appleId;
+            int bananaId;
+            int orderId;
+            using (var conn = ConnectionFactory.GetConnection())
+            {
+                conn.Insert(new Customer { CustomerID = "Brett", CompanyName = "Brett Yu" });
+                appleId = (int)conn.Insert(new Product { ProductName = "Apple" });
+                bananaId = (int)conn.Insert(new Product { ProductName = "Banana" });
+                orderId = (int)conn.Insert(new Order { CustomerID = "Brett", OrderDate = DateTime.Now });
+            }
+
+            using (var conn = ConnectionFactory.GetConnection())
+            {
+                conn.Insert(new OrderDetail { OrderId = orderId, ProductId = appleId, Quantity = 100 });
+                conn.Insert(new OrderDetail { OrderId = orderId, ProductId = bananaId, Quantity = 200 });
+
+                //not able to use this api for composite keys entity
+                //var result = conn.GetAll<OrderDetail>().ToList();
+
+                var result = conn.Query<OrderDetail>("select OrderId, ProductId, Quantity from [Order Details]").ToList();
+                result[0].Quantity.Should().Be(100);
+                result[1].Quantity.Should().Be(200);
             }
         }
 

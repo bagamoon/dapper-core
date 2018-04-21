@@ -25,9 +25,13 @@ namespace DapperTesting.Tests
                                   delete from customers
                                   delete from products
                                   delete from categories
+                                  delete from EmployeeTerritories
+                                  delete from Territories
+                                  delete from Employees
                                   DBCC CHECKIDENT ('orders', RESEED, 0)
                                   DBCC CHECKIDENT ('products', RESEED, 0)
-                                  DBCC CHECKIDENT ('categories', RESEED, 0)";
+                                  DBCC CHECKIDENT ('categories', RESEED, 0)
+                                  DBCC CHECKIDENT ('Employees', RESEED, 0)";
                 conn.Execute(deleteSql);
             }
         }
