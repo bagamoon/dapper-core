@@ -59,7 +59,7 @@ namespace DapperTesting.Tests
         }
 
         [TestMethod]
-        public void Query_First_With_Condition_Should_Return_Correct_Result()
+        public void QueryFirst_With_Condition_Should_Return_Correct_Result()
         {
             using (var conn = ConnectionFactory.GetConnection())
             {
@@ -81,7 +81,7 @@ namespace DapperTesting.Tests
         }
 
         [TestMethod]
-        public void Query_With_Parameter_Should_Return_Correct_Result()
+        public void QueryFirst_With_Parameter_Should_Return_Correct_Result()
         {
             using (var conn = ConnectionFactory.GetConnection())
             {
@@ -114,6 +114,8 @@ namespace DapperTesting.Tests
             }
 
             var builder = new SqlBuilder();
+
+            //please note that keyword of template must be lower case: /**select**/ /**where**/
             var template = builder.AddTemplate("Select /**select**/ from Customers /**where**/ ");
             builder.Select("CustomerID");
             builder.Where("City = @city", new { city = new DbString { Value = "Taipei", IsAnsi = false } });
