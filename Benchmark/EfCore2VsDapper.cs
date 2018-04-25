@@ -2,7 +2,9 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 using Dapper;
+using Dapper.Contrib.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,7 +17,7 @@ namespace Benchmark
     {
         [Benchmark]
         public Bets EfGetBetById()
-        {            
+        {
             using (var db = new northwindContext())
             {
                 long betId = 100;
@@ -93,7 +95,7 @@ namespace Benchmark
 
                 var memberLookup = new Dictionary<long, Members>();
 
-                return conn.Query<Members, Bets, Members>(sql,                                                           
+                return conn.Query<Members, Bets, Members>(sql,
                                                           (member, bet) =>
                                                           {
                                                               Members m;
@@ -108,7 +110,57 @@ namespace Benchmark
                                                           },
                                                           param: new { memberId = memberId },
                                                           splitOn: "BetId")
-                                                          .First();                         
+                                                          .First();
+            }
+        }
+
+        [Benchmark]
+        public void EfAddOneHundredNewBets()
+        {
+            using (var db = new northwindContext())
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    db.Bets.Add(new Bets { MemberId = 1, StakeAmount = 100, DateCreated = DateTime.Now, DateUpdated = DateTime.Now });
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        [Benchmark]
+        public void DapperAddOneHundredNewBets()
+        {
+            using (var conn = ConnectionFactory.GetConnection())
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    conn.Insert(new Bets { MemberId = 1, StakeAmount = 100, DateCreated = DateTime.Now, DateUpdated = DateTime.Now });
+                }
+            }
+        }
+
+        [Benchmark]
+        public void EfUpdateOneHundredBets()
+        {
+            using (var db = new northwindContext())
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    db.Update(new Bets { BetId = i, MemberId = 1, StakeAmount = 99, DateCreated = DateTime.Now, DateUpdated = DateTime.Now });
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        [Benchmark]
+        public void DapperUpdateOneHundredBets()
+        {
+            using (var conn = ConnectionFactory.GetConnection())
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    conn.Update(new Bets { BetId = i, MemberId = 1, StakeAmount = 49, DateCreated = DateTime.Now, DateUpdated = DateTime.Now });                    
+                }
             }
         }
     }
