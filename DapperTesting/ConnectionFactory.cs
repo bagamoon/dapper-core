@@ -10,7 +10,7 @@ namespace DapperTesting
     {
         public static IDbConnection GetConnection()
         {
-            return new SqlConnection("Server=localhost;Database=northwind;User Id=sa;Password=pass1234");
+            return new SqlConnection("Server=localhost\\sqlexpress;Database=northwind;User Id=sa;Password=pass1234");
         }
     }
 }

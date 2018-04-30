@@ -8,7 +8,7 @@ namespace Benchmark
 {
     public class ConnectionFactory
     {
-        public readonly static string ConnectionString = "Server=localhost;Database=northwind;User Id=sa;Password=pass1234";
+        public readonly static string ConnectionString = "Server=localhost\\sqlexpress;Database=northwind;User Id=sa;Password=pass1234";
 
         public static IDbConnection GetConnection()
         {
